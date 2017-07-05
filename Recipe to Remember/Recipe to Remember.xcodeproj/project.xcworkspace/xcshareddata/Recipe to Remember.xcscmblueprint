@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "852EEAE104FA31FE93B2C494FEB1668FED7C0BE9",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "852EEAE104FA31FE93B2C494FEB1668FED7C0BE9" : 9223372036854775807,
+    "49BCE38C36C5891FD8669E5BE82A79BCDF43756F" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "C2C8CFA7-26EE-44E6-84CA-B8F3A311894F",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "852EEAE104FA31FE93B2C494FEB1668FED7C0BE9" : "iOS%20Projects\/",
+    "49BCE38C36C5891FD8669E5BE82A79BCDF43756F" : "iOSApps\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "Recipe to Remember",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "Recipe to Remember\/Recipe to Remember.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/smashbro6894\/iOSApps.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "49BCE38C36C5891FD8669E5BE82A79BCDF43756F"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/smashbro6894\/iosProjects.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "852EEAE104FA31FE93B2C494FEB1668FED7C0BE9"
+    }
+  ]
+}
