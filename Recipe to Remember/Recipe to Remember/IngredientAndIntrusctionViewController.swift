@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 import AVFoundation
 
-class IngredientAndInstructionViewController: UIViewController, IngredientAndInstructionViewControllerDelegate {
+class IngredientAndInstructionViewController: UIViewController, IngredientAndInstructionViewControllerDelegate, UIViewControllerTransitioningDelegate {
     
     var ingredients = [Ingredient]()
     
@@ -21,13 +21,34 @@ class IngredientAndInstructionViewController: UIViewController, IngredientAndIns
     }
     var movingBackwards = true
     
+    @IBOutlet weak var startCookingButton: UIButton!
+    @IBOutlet weak var editInstructionsButton: UIButton!
+    @IBOutlet weak var shadowView: UIView!
     var player: AVAudioPlayer?
 
     let managedObjectContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
+    let transition = CircularTransition()
+    
     @IBAction func addIngredientButton(_ sender: UIBarButtonItem) {
         
     
+    }
+    
+    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        transition.transitionMode = .present
+        transition.startingPoint = self.view.center
+        transition.circleColor = self.view.backgroundColor!
+        
+        return transition
+    }
+    
+    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        transition.transitionMode = .dismiss
+        transition.startingPoint = self.view.center
+        transition.circleColor = self.view.backgroundColor!
+        
+        return transition
     }
     
     @IBOutlet weak var ingredientTableView: UITableView!
@@ -36,11 +57,12 @@ class IngredientAndInstructionViewController: UIViewController, IngredientAndIns
     override func viewWillAppear(_ animated: Bool) {
         movingBackwards = true
     }
-    override func viewWillDisappear(_ animated: Bool) {
-        if movingBackwards {
-            reversePageTurningFx()
-        }
-    }
+    
+//    override func viewWillDisappear(_ animated: Bool) {
+//        if movingBackwards {
+//            reversePageTurningFx()
+//        }
+//    }
     
     func reversePageTurningFx() {
         guard let url = Bundle.main.url(forResource: "Reverse page turning", withExtension:".m4a") else {
@@ -72,6 +94,14 @@ class IngredientAndInstructionViewController: UIViewController, IngredientAndIns
         super.viewDidLoad()
         ingredientTableView.dataSource = self
         ingredientTableView.delegate = self
+        ingredientTableView.layer.cornerRadius = 10
+        shadowView.layer.cornerRadius = 10
+        shadowView.layer.shadowOffset = CGSize(width: 3, height: -3)
+        shadowView.layer.shadowColor = UIColor.lightGray.cgColor
+        shadowView.layer.shadowOpacity = 1
+        shadowView.layer.shadowRadius = 3
+        editInstructionsButton.layer.cornerRadius = 5
+        startCookingButton.layer.cornerRadius = 5
         print(recipe?.name ?? "Found nil")
         fetchAllItems()
 
@@ -104,6 +134,8 @@ class IngredientAndInstructionViewController: UIViewController, IngredientAndIns
             backItem.title = "Back"
             navigationItem.backBarButtonItem = backItem
             instructionViewController.editingTextBool = true
+            instructionViewController.transitioningDelegate = self
+            instructionViewController.modalPresentationStyle = .custom
             let recipe = self.recipe
             print("This is the recipe we will be editing: \(String(describing: recipe?.name))")
             instructionViewController.recipe = recipe
@@ -115,6 +147,8 @@ class IngredientAndInstructionViewController: UIViewController, IngredientAndIns
             instructionViewController.editingTextBool = false
             let recipe = self.recipe
             instructionViewController.recipe = recipe
+            instructionViewController.transitioningDelegate = self
+            instructionViewController.modalPresentationStyle = .custom
         }
     }
     
@@ -192,8 +226,8 @@ extension IngredientAndInstructionViewController: UITableViewDelegate, UITableVi
         } catch {
             print(error)
         }
+        tableView.deleteRows(at: [indexPath], with: .fade)
         fetchAllItems()
-        tableView.reloadData()
         
     }
     

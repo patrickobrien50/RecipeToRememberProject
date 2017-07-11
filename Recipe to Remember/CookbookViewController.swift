@@ -15,7 +15,7 @@ class CookbookViewController: UIViewController, CustomCookbookAndRecipeCellDeleg
     var filteredCookbooks = [Cookbook]()
     let managedObjectContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var player: AVAudioPlayer?
-    
+    var viewAppeared: Bool?
     var searching = false
     
     
@@ -46,9 +46,9 @@ class CookbookViewController: UIViewController, CustomCookbookAndRecipeCellDeleg
                 } catch {
                     print("This is the error: \(error)")
                 }
-                
-                
+                let indexPath: IndexPath = IndexPath(row: self.cookbooks.count - 1, section: 0)
                 self.cookbookTableView.reloadData()
+                self.cookbookTableView.reloadRows(at: [indexPath], with: .left)
                 print(self.cookbooks)
                 
                 
@@ -62,6 +62,8 @@ class CookbookViewController: UIViewController, CustomCookbookAndRecipeCellDeleg
         
         self.present(alertController, animated: true, completion: nil)
         
+    
+        
         
         
         
@@ -73,16 +75,26 @@ class CookbookViewController: UIViewController, CustomCookbookAndRecipeCellDeleg
         cookbookTableView.delegate = self
         cookbookTableView.dataSource = self
         cookbookSearchBar.delegate = self
-        cookbookTableView.rowHeight = 76
+        cookbookTableView.rowHeight = 134
         fetchAllItems()
         print(cookbooks)
         // Do any additional setup after loading the view.
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        if viewAppeared == nil {
+        animateTable()
+            viewAppeared = true
+        } else {
+            animateTableBackwards()
+        }
     }
     
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "CookbookSegue" {
             let recipesController = segue.destination as! RecipeViewController
+            recipesController.movingBackwards = false
             let indexPath: NSIndexPath
             
             if sender is UITableViewCell {
@@ -108,6 +120,28 @@ class CookbookViewController: UIViewController, CustomCookbookAndRecipeCellDeleg
             print("Error")
         }
     }
+    
+    func animateTableBackwards() {
+        cookbookTableView.reloadData()
+        
+        let cells = cookbookTableView.visibleCells
+        
+        let tableViewWidth = cookbookTableView.bounds.size.width
+        
+        for cell in cells {
+            cell.transform = CGAffineTransform(translationX: tableViewWidth * -1, y: 0)
+        }
+        
+        var delayCounter = 0
+        
+        for cell in cells {
+            UIView.animate(withDuration: 1.0, delay: Double(delayCounter) * 0.05, usingSpringWithDamping: 1.0, initialSpringVelocity: 0, options: .curveEaseInOut, animations: {
+                cell.transform = CGAffineTransform.identity
+            }, completion: nil)
+            delayCounter += 1
+        }
+    }
+
 
     
     func fetchAllItems() {
@@ -151,7 +185,29 @@ class CookbookViewController: UIViewController, CustomCookbookAndRecipeCellDeleg
         } else {
             searching = true
         }
+        animateTable()
+//        cookbookTableView.reloadData()
+    }
+    
+    func animateTable() {
         cookbookTableView.reloadData()
+        
+        let cells = cookbookTableView.visibleCells
+        
+        let tableViewWidth = cookbookTableView.bounds.size.width
+        
+        for cell in cells {
+            cell.transform = CGAffineTransform(translationX: tableViewWidth, y: 0)
+        }
+        
+        var delayCounter = 0
+        
+        for cell in cells {
+            UIView.animate(withDuration: 1.0, delay: Double(delayCounter) * 0.05, usingSpringWithDamping: 1.0, initialSpringVelocity: 0, options: .curveEaseInOut, animations: {
+                cell.transform = CGAffineTransform.identity
+            }, completion: nil)
+            delayCounter += 1
+        }
     }
 
 
@@ -190,6 +246,11 @@ extension CookbookViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CookbookCell", for: indexPath) as! CustomCookbookAndRecipeCell
         cell.cellDelegate = self
+        cell.cellView.layer.shadowColor = UIColor.lightGray.cgColor
+        cell.cellView.layer.shadowOpacity = 1
+        cell.cellView.layer.shadowOffset = CGSize(width: 4.0, height: -5.0)
+        cell.cellView.layer.shadowRadius = 3
+        cell.cellView.layer.cornerRadius = cell.cellView.layer.bounds.height / 20
         if searching {
             cell.editButton.setTitle(filteredCookbooks[indexPath.row].name, for: .normal)
             cell.editButton.sizeToFit()
@@ -245,9 +306,9 @@ extension CookbookViewController: UITableViewDelegate, UITableViewDataSource {
         
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        segueFx()
-    }
+//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        segueFx()
+//    }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         var cookbook: Cookbook?
@@ -265,8 +326,8 @@ extension CookbookViewController: UITableViewDelegate, UITableViewDataSource {
         } catch {
             print(error)
         }
+        cookbookTableView.deleteRows(at: [indexPath], with: .fade)
         fetchAllItems()
-        tableView.reloadData()
         
     }
 

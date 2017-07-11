@@ -13,6 +13,7 @@ class CustomCookbookAndRecipeCell: UITableViewCell {
     
     weak var cellDelegate: CustomCookbookAndRecipeCellDelegate?
     
+    @IBOutlet weak var cellView: UIView!
     @IBOutlet weak var editButton: UIButton!
     @IBAction func editButtonPressed(_ sender: UIButton) {
         print("Button Pressed")
